@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-
+import Site from './components/Site';
+import Navbar from './components/Navbar';
+import Products from './components/Products';
+import Categories from './components/Categories';
+import { useState, useEffect } from 'react';
 function App() {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  
+
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products')
+            .then(res=>res.json())
+            .then(json=>setProducts(json))
+  }, []);
+
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products/categories')
+            .then(res=>res.json())
+            .then(json=>setCategories(json))
+  }, [])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Site>
+      <Navbar categories={categories}/>
+      <Products products={products}/>
+      <Categories categories={categories}/>
+    </Site>
   );
 }
 
