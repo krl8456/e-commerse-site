@@ -8,13 +8,25 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface CategoriesProps {
   categories: Array<string>;
+  searchByCategory(category: string): void;
 }
 
-export default function Categories({ categories }: CategoriesProps) {
+export default function Categories({
+  categories,
+  searchByCategory,
+}: CategoriesProps) {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   if (!mediaBreakpoint) return null;
   return (
-    <Box sx={{ width: "100%", maxWidth: 360, position: "absolute", top: 160, ml: 2 }}>
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: 360,
+        position: "absolute",
+        top: 160,
+        ml: 2,
+      }}
+    >
       <Typography
         variant="h1"
         component="h2"
@@ -23,8 +35,13 @@ export default function Categories({ categories }: CategoriesProps) {
         Categories
       </Typography>
       <List>
+        <ListItem disablePadding onClick={() => searchByCategory("")}>
+          <ListItemButton>
+            <ListItemText primary="All" />
+          </ListItemButton>
+        </ListItem>
         {categories.map((el) => (
-          <ListItem disablePadding>
+          <ListItem disablePadding onClick={() => searchByCategory(el)}>
             <ListItemButton>
               <ListItemText
                 primary={el.charAt(0).toUpperCase() + el.slice(1)}

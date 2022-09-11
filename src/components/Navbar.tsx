@@ -1,15 +1,3 @@
-// import { Box, Typography } from "@mui/material";
-
-// export default function Navbar() {
-//   return (
-//     <Box>
-//       <Typography variant="h2" component="p" sx={{fontFamily: "Qwitcher Grypen", fontWeight: 700, p:2}}>
-//         MyShop
-//       </Typography>
-//       <Typography variant="body1" component="p"></Typography>
-//     </Box>
-//   );
-// };
 import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -24,14 +12,22 @@ import MenuItem from "@mui/material/MenuItem";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { Product } from "../interfaces";
 import { v4 as uuidv4 } from "uuid";
+import { Link } from "react-router-dom";
 
 interface NavbarProps {
   categories: Array<string>;
+  products: Array<Product>;
+  searchByCategory(category: string): void;
 }
 
-export default function Navbar({ categories }: NavbarProps) {
+export default function Navbar({
+  categories,
+  products,
+  searchByCategory,
+}: NavbarProps) {
   const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = React.useState<null | HTMLElement>(
     null
@@ -54,24 +50,17 @@ export default function Navbar({ categories }: NavbarProps) {
   const handleProfile = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorProfile(event.currentTarget);
   };
-  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setTextFieldData(event.target.value);
-  }
+  };
   const handleTextFieldOnClick = () => {
     setIsProductListOpen(true);
-  }
-
-  React.useEffect(() => {
-    const closeModalList = (event: any) => {
-      console.log(event);
-      if (event.path[0].tagName !== "INPUT")
-        setIsProductListOpen(false);
-    }
-
-    document.addEventListener('click', closeModalList);
-
-    return () => document.removeEventListener('click', closeModalList);
-  }, [])
+  };
+  const handleTextFieldAwayClick = () => {
+    setIsProductListOpen(false);
+  };
 
   return (
     <Box
@@ -82,7 +71,13 @@ export default function Navbar({ categories }: NavbarProps) {
       <AppBar
         position="static"
         color="inherit"
-        sx={{ py: 1, borderRadius: 8, width: "99vw", position: "relative", left: -25 }}
+        sx={{
+          py: 1,
+          borderRadius: 8,
+          width: "99vw",
+          position: "relative",
+          left: -25,
+        }}
       >
         <Toolbar>
           {!mediaBreakpoint && (
@@ -106,33 +101,116 @@ export default function Navbar({ categories }: NavbarProps) {
                 }}
                 sx={{ mt: 5 }}
               >
-                {categories.map((el) => (
+                <Box onClick={() => searchByCategory("")}>
                   <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
                     <Typography variant="h5" component="p">
-                      {el.charAt(0).toUpperCase() + el.slice(1)}
+                      All
                     </Typography>
                   </MenuItem>
+                </Box>
+                {categories.map((el) => (
+                  <Box onClick={() => searchByCategory(el)}>
+                    <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
+                      <Typography variant="h5" component="p">
+                        {el.charAt(0).toUpperCase() + el.slice(1)}
+                      </Typography>
+                    </MenuItem>
+                  </Box>
                 ))}
               </Menu>{" "}
             </>
           )}
-
-          <Typography
-            variant={titleMatches ? "h2" : "h5"}
-            component="div"
-            sx={{
-              flexGrow: 1,
-              fontFamily: "Qwitcher Grypen",
-              fontWeight: 700,
-              ml: "3%",
+          <Link
+            to={"/"}
+            style={{
+              textDecoration: "none",
+              color: "black",
+              marginLeft: "3%",
+              marginRight: "auto",
             }}
           >
-            MyShop
-          </Typography>
+            <Typography
+              variant={titleMatches ? "h2" : "h5"}
+              component="div"
+              sx={{
+                flexGrow: 1,
+                fontFamily: "Qwitcher Grypen",
+                fontWeight: 700,
+              }}
+            >
+              MyShop
+            </Typography>
+          </Link>
 
-          <Box sx={{ display: "flex", alignItems: "flex-end", mr: 12, position: mediaBreakpoint ? "relative" : "absolute", top: mediaBreakpoint ? 0 : 90, right: -20, width: "40%" }} onClick={handleTextFieldOnClick}>
-            <TextField id="input-with-sx" label="Search for product..." variant="standard" color="secondary" onChange={handleTextFieldChange} sx={{width: "100%"}}/>
-            {textFieldData !== "" && isProductListOpen &&  <Paper sx={{width: "100%", height: "200px", position: "absolute", zIndex: 2, top: 70}}></Paper>}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-end",
+              mr: 12,
+              position: mediaBreakpoint ? "relative" : "absolute",
+              top: mediaBreakpoint ? 0 : 90,
+              right: -20,
+              width: "40%",
+            }}
+          >
+            <ClickAwayListener onClickAway={handleTextFieldAwayClick}>
+              <TextField
+                id="input-with-sx"
+                label="Search for product..."
+                variant="standard"
+                color="secondary"
+                onChange={handleTextFieldChange}
+                onClick={handleTextFieldOnClick}
+                sx={{ width: "100%" }}
+              />
+            </ClickAwayListener>
+            {textFieldData !== "" && isProductListOpen && (
+              <Paper
+                sx={{
+                  width: "100%",
+                  height: "200px",
+                  position: "absolute",
+                  zIndex: 2,
+                  top: 70,
+                  overflowY: "scroll",
+                }}
+              >
+                {products
+                  .filter(
+                    (el) =>
+                      el.title
+                        .toLowerCase()
+                        .indexOf(textFieldData.toLowerCase()) !== -1
+                  )
+                  .map((el) => (
+                    <Link
+                      to={`/products/${el.id}`}
+                      style={{ textDecoration: "none", color: "black" }}
+                    >
+                      <Box
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover": {
+                            backgroundColor: "hsla(177, 5%, 82%, .4)",
+                          },
+                          py: 2,
+                        }}
+                      >
+                        <img
+                          src={el.image}
+                          alt="product"
+                          style={{
+                            width: "30px",
+                            height: "auto",
+                            marginInline: "10px",
+                          }}
+                        />
+                        {el.title}
+                      </Box>
+                    </Link>
+                  ))}
+              </Paper>
+            )}
           </Box>
 
           {auth ? (
