@@ -1,8 +1,6 @@
-import React from "react";
 import { Product } from "../interfaces";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import { Link } from "react-router-dom";
 interface relatedProductProps {
   product: Product;
@@ -13,6 +11,7 @@ export default function RelatedProduct({ product }: relatedProductProps) {
     <Link
       to={`/products/${product.id}`}
       style={{ width: "10em", color: "black", textDecoration: "none" }}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
       <Paper sx={{p: 2}}>
         <img
@@ -22,7 +21,7 @@ export default function RelatedProduct({ product }: relatedProductProps) {
         />
 
         <Typography variant="body1" component="div">
-          {product.title}
+          {product.title  }
         </Typography>
         <Typography variant="h6" component="div">
           {product.price} $

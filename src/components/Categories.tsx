@@ -5,6 +5,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { Link } from "react-router-dom";
 
 interface CategoriesProps {
   categories: Array<string>;
@@ -35,19 +36,23 @@ export default function Categories({
         Categories
       </Typography>
       <List>
-        <ListItem disablePadding onClick={() => searchByCategory("")}>
-          <ListItemButton>
-            <ListItemText primary="All" />
-          </ListItemButton>
-        </ListItem>
-        {categories.map((el) => (
-          <ListItem disablePadding onClick={() => searchByCategory(el)}>
+        <Link to="/" style={{textDecoration: "none", color: "black"}}>
+          <ListItem disablePadding onClick={() => searchByCategory("")}>
             <ListItemButton>
-              <ListItemText
-                primary={el.charAt(0).toUpperCase() + el.slice(1)}
-              />
+              <ListItemText primary="All" />
             </ListItemButton>
           </ListItem>
+        </Link>
+        {categories.map((el) => (
+          <Link to="/" style={{textDecoration: "none", color: "black"}}>
+            <ListItem disablePadding onClick={() => searchByCategory(el)}>
+              <ListItemButton>
+                <ListItemText
+                  primary={el.charAt(0).toUpperCase() + el.slice(1)}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </Box>

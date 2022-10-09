@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Product } from "../interfaces";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";

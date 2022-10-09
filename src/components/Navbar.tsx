@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -19,22 +19,20 @@ import { Link } from "react-router-dom";
 
 interface NavbarProps {
   categories: Array<string>;
-  products: Array<Product>;
+  allProducts: Array<Product>;
   searchByCategory(category: string): void;
 }
 
 export default function Navbar({
   categories,
-  products,
+  allProducts,
   searchByCategory,
 }: NavbarProps) {
-  const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
-  const [anchorProfile, setAnchorProfile] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [auth, setAuth] = React.useState(false);
-  const [textFieldData, setTextFieldData] = React.useState("");
-  const [isProductListOpen, setIsProductListOpen] = React.useState(true);
+  const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
+  const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
+  const [auth, setAuth] = useState(false);
+  const [textFieldData, setTextFieldData] = useState("");
+  const [isProductListOpen, setIsProductListOpen] = useState(true);
   const openMenu = Boolean(anchorMenu);
   const titleMatches = useMediaQuery("(min-width:420px)");
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
@@ -101,21 +99,25 @@ export default function Navbar({
                 }}
                 sx={{ mt: 5 }}
               >
-                <Box onClick={() => searchByCategory("")}>
-                  <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
-                    <Typography variant="h5" component="p">
-                      All
-                    </Typography>
-                  </MenuItem>
-                </Box>
-                {categories.map((el) => (
-                  <Box onClick={() => searchByCategory(el)}>
+                <Link to="/" style={{textDecoration: "none", color: "black"}}>
+                  <Box onClick={() => searchByCategory("")}>
                     <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
                       <Typography variant="h5" component="p">
-                        {el.charAt(0).toUpperCase() + el.slice(1)}
+                        All
                       </Typography>
                     </MenuItem>
                   </Box>
+                </Link>
+                {categories.map((el) => (
+                  <Link to="/" style={{textDecoration: "none", color: "black"}}>
+                    <Box onClick={() => searchByCategory(el)}>
+                      <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
+                        <Typography variant="h5" component="p">
+                          {el.charAt(0).toUpperCase() + el.slice(1)}
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                  </Link>
                 ))}
               </Menu>{" "}
             </>
@@ -162,6 +164,7 @@ export default function Navbar({
                 onChange={handleTextFieldChange}
                 onClick={handleTextFieldOnClick}
                 sx={{ width: "100%" }}
+                autoComplete="off"
               />
             </ClickAwayListener>
             {textFieldData !== "" && isProductListOpen && (
@@ -175,7 +178,7 @@ export default function Navbar({
                   overflowY: "scroll",
                 }}
               >
-                {products
+                {allProducts
                   .filter(
                     (el) =>
                       el.title
@@ -247,10 +250,14 @@ export default function Navbar({
             </div>
           ) : (
             <>
-              <Button sx={{ color: "#000", mr: 2 }}>Login</Button>
-              <Button variant="contained" color="secondary">
-                Sign up
-              </Button>{" "}
+              <Link to={"/signin"} style={{ textDecoration: "none" }}>
+                <Button sx={{ color: "#000", mr: 2 }}>Sign in</Button>
+              </Link>
+              <Link to={"/signup"} style={{ textDecoration: "none" }}>
+                <Button variant="contained" color="secondary">
+                  Sign up
+                </Button>{" "}
+              </Link>
             </>
           )}
         </Toolbar>
