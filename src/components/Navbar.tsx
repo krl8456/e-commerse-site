@@ -21,16 +21,19 @@ interface NavbarProps {
   categories: Array<string>;
   allProducts: Array<Product>;
   searchByCategory(category: string): void;
+  auth: boolean;
+  username: string;
 }
 
 export default function Navbar({
   categories,
   allProducts,
   searchByCategory,
+  auth,
+  username
 }: NavbarProps) {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
-  const [auth, setAuth] = useState(false);
   const [textFieldData, setTextFieldData] = useState("");
   const [isProductListOpen, setIsProductListOpen] = useState(true);
   const openMenu = Boolean(anchorMenu);
@@ -59,7 +62,6 @@ export default function Navbar({
   const handleTextFieldAwayClick = () => {
     setIsProductListOpen(false);
   };
-
   return (
     <Box
       sx={{
@@ -227,6 +229,7 @@ export default function Navbar({
                 color="inherit"
               >
                 <AccountCircle />
+                <Typography variant="body1" component="span">{username}</Typography>
               </IconButton>
               <Menu
                 id="menu-appbar"
