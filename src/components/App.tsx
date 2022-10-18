@@ -1,18 +1,20 @@
-import "./App.css";
-import Site from "./components/Site";
-import Navbar from "./components/Navbar";
-import Products from "./components/ProductCard";
-import Categories from "./components/Categories";
-import MainContent from "./components/MainContent";
-import ProductDetails from "./components/ProductDetails";
-import ProductsContainer from "./components/ProductsContainer";
+import "../App.css";
+import Site from "./Site";
+import Navbar from "./Navbar";
+import Products from "./ProductCard";
+import Categories from "./Categories";
+import MainContent from "./MainContent";
+import ProductDetails from "./ProductDetails";
+import ProductsContainer from "./ProductsContainer";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Product, User } from "./interfaces";
+import { Product, User } from "../interfaces";
 import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import SignIn from "./components/SignIn";
-import SignUp from "./components/SignUp";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
+
 function App() {
   const [products, setProducts] = useState<Array<Product>>([]);
   const [allProducts, setAllProducts] = useState<Array<Product>>([]);
@@ -72,47 +74,60 @@ function App() {
   ));
 
   return (
-    <Site>
-      <Navbar
-        categories={categories}
-        allProducts={allProducts}
-        searchByCategory={searchByCategory}
-        auth={auth}
-        username={username}
-      />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            loadingProducts ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "80vh",
-                }}
-              >
-                <CircularProgress sx={{ color: "#000" }} />
-              </Box>
-            ) : (
-              <MainContent>
-                <ProductsContainer title={categoryTitle}>
-                  {productComponents}
-                </ProductsContainer>
-                <Categories
-                  categories={categories}
-                  searchByCategory={searchByCategory}
-                />
-              </MainContent>
-            )
-          }
-        ></Route>
-        {productsRoutes}
-        <Route path="/signin" element={<SignIn username={username} password={password} setUsername = {setUsername} setPassword={setPassword} setAuth={setAuth}/>}></Route>
-        <Route path="/signup" element={<SignUp />}></Route>
-      </Routes>
-    </Site>
+    <AuthProvider>
+      <Site>
+        <Navbar
+          categories={categories}
+          allProducts={allProducts}
+          searchByCategory={searchByCategory}
+          auth={auth}
+          username={username}
+        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              loadingProducts ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "80vh",
+                  }}
+                >
+                  <CircularProgress sx={{ color: "#000" }} />
+                </Box>
+              ) : (
+                <MainContent>
+                  <ProductsContainer title={categoryTitle}>
+                    {productComponents}
+                  </ProductsContainer>
+                  <Categories
+                    categories={categories}
+                    searchByCategory={searchByCategory}
+                  />
+                </MainContent>
+              )
+            }
+          ></Route>
+          {productsRoutes}
+          <Route
+            path="/signin"
+            element={
+              <SignIn
+                username={username}
+                password={password}
+                setUsername={setUsername}
+                setPassword={setPassword}
+                setAuth={setAuth}
+              />
+            }
+          ></Route>
+          <Route path="/signup" element={<SignUp />}></Route>
+        </Routes>
+      </Site>
+    </AuthProvider>
   );
 }
 
