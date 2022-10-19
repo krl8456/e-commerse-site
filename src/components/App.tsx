@@ -9,7 +9,7 @@ import ProductsContainer from "./ProductsContainer";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { Product, User } from "../interfaces";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
@@ -17,7 +17,8 @@ import { AuthProvider, useAuth } from "../contexts/AuthContext";
 
 function App() {
   const [products, setProducts] = useState<Array<Product>>([]);
-  const [allProducts, setAllProducts] = useState<Array<Product>>([]);
+  // const [allProducts, setAllProducts] = useState<Array<Product>>([]);
+  const [currentCategory, setCurrentCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [categoryTitle, setCategoryTitle] = useState("All products");
@@ -31,7 +32,7 @@ function App() {
       .then((res) => res.json())
       .then((json) => {
         setProducts(json);
-        setAllProducts(json);
+        // setAllProducts(json);
         setLoadingProducts(false);
       });
   }, []);
@@ -50,26 +51,28 @@ function App() {
 
   const searchByCategory = (category: string) => {
     if (category === "") {
-      fetch("https://fakestoreapi.com/products")
-        .then((res) => res.json())
-        .then((json) => setProducts(json));
+      setCurrentCategory("");
       setCategoryTitle("All products");
       return;
     }
-    fetch(`https://fakestoreapi.com/products/category/${category}`)
-      .then((res) => res.json())
-      .then((json) => setProducts(json));
+    setCurrentCategory(category);
     setCategoryTitle(`${category.charAt(0).toUpperCase() + category.slice(1)}`);
   };
 
-  const productComponents = products
-    .map((el) => <Products product={el} />)
-    .slice(0, 9);
+  const currentProducts = useMemo(() => {
+    return currentCategory !== ""
+      ? products.filter((item) => item.category === currentCategory)
+      : products;
+  }, [products, currentCategory]);
 
-  const productsRoutes = allProducts.map((el) => (
+  // const productComponents = products
+  //   .map((el) => <Products product={el} />)
+  //   .slice(0, 9);
+
+  const productsRoutes = products.map((el) => (
     <Route
       path={`/products/${el.id}`}
-      element={<ProductDetails product={el} allProducts={allProducts} />}
+      element={<ProductDetails product={el} products={products} />}
     ></Route>
   ));
 
@@ -78,7 +81,7 @@ function App() {
       <Site>
         <Navbar
           categories={categories}
-          allProducts={allProducts}
+          products={products}
           searchByCategory={searchByCategory}
           auth={auth}
           username={username}
@@ -101,7 +104,9 @@ function App() {
               ) : (
                 <MainContent>
                   <ProductsContainer title={categoryTitle}>
-                    {productComponents}
+                    {currentProducts
+                      .map((el) => <Products product={el} />)
+                      .slice(0, 9)}
                   </ProductsContainer>
                   <Categories
                     categories={categories}

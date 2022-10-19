@@ -58,7 +58,6 @@ function SignUp() {
         <Typography variant="h4" component="h2" sx={{ mb: "1em", textAlign: "center" }}>
           Create an account
         </Typography>
-        {currentUser.email}
         <Typography variant="body1" component="p">
           Email:
         </Typography>

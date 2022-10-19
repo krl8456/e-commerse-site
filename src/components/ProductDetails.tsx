@@ -10,13 +10,13 @@ import RelatedProduct from "./RelatedProduct"
 
 interface ProductDetailsProps {
   product: Product;
-  allProducts: Array<Product>
+  products: Array<Product>
 }
 
-export default function ProductDetails({ product, allProducts }: ProductDetailsProps) {
+export default function ProductDetails({ product, products }: ProductDetailsProps) {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
 
-  const relatedProducts = allProducts.filter(el => el.category === product.category && el.id !== product.id).map(el => <RelatedProduct product={el} />)
+  const relatedProducts = products.filter(el => el.category === product.category && el.id !== product.id).map(el => <RelatedProduct product={el} />)
 
 
   return (

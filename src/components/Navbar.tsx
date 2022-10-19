@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 
 interface NavbarProps {
   categories: Array<string>;
-  allProducts: Array<Product>;
+  products: Array<Product>;
   searchByCategory(category: string): void;
   auth: boolean;
   username: string;
@@ -27,15 +27,16 @@ interface NavbarProps {
 
 export default function Navbar({
   categories,
-  allProducts,
+  products,
   searchByCategory,
   auth,
-  username
+  username,
 }: NavbarProps) {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
   const [textFieldData, setTextFieldData] = useState("");
   const [isProductListOpen, setIsProductListOpen] = useState(true);
+  // const [query, setQuery] = useState("");
   const openMenu = Boolean(anchorMenu);
   const titleMatches = useMediaQuery("(min-width:420px)");
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
@@ -62,6 +63,11 @@ export default function Navbar({
   const handleTextFieldAwayClick = () => {
     setIsProductListOpen(false);
   };
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) =>
+      product.title.toLowerCase().includes(textFieldData.toLowerCase())
+    );
+  }, [products, textFieldData]);
   return (
     <Box
       sx={{
@@ -101,7 +107,7 @@ export default function Navbar({
                 }}
                 sx={{ mt: 5 }}
               >
-                <Link to="/" style={{textDecoration: "none", color: "black"}}>
+                <Link to="/" style={{ textDecoration: "none", color: "black" }}>
                   <Box onClick={() => searchByCategory("")}>
                     <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
                       <Typography variant="h5" component="p">
@@ -111,7 +117,10 @@ export default function Navbar({
                   </Box>
                 </Link>
                 {categories.map((el) => (
-                  <Link to="/" style={{textDecoration: "none", color: "black"}}>
+                  <Link
+                    to="/"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
                     <Box onClick={() => searchByCategory(el)}>
                       <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
                         <Typography variant="h5" component="p">
@@ -180,40 +189,33 @@ export default function Navbar({
                   overflowY: "scroll",
                 }}
               >
-                {allProducts
-                  .filter(
-                    (el) =>
-                      el.title
-                        .toLowerCase()
-                        .indexOf(textFieldData.toLowerCase()) !== -1
-                  )
-                  .map((el) => (
-                    <Link
-                      to={`/products/${el.id}`}
-                      style={{ textDecoration: "none", color: "black" }}
+                {filteredProducts.map((el) => (
+                  <Link
+                    to={`/products/${el.id}`}
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <Box
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": {
+                          backgroundColor: "hsla(177, 5%, 82%, .4)",
+                        },
+                        py: 2,
+                      }}
                     >
-                      <Box
-                        sx={{
-                          cursor: "pointer",
-                          "&:hover": {
-                            backgroundColor: "hsla(177, 5%, 82%, .4)",
-                          },
-                          py: 2,
+                      <img
+                        src={el.image}
+                        alt="product"
+                        style={{
+                          width: "30px",
+                          height: "auto",
+                          marginInline: "10px",
                         }}
-                      >
-                        <img
-                          src={el.image}
-                          alt="product"
-                          style={{
-                            width: "30px",
-                            height: "auto",
-                            marginInline: "10px",
-                          }}
-                        />
-                        {el.title}
-                      </Box>
-                    </Link>
-                  ))}
+                      />
+                      {el.title}
+                    </Box>
+                  </Link>
+                ))}
               </Paper>
             )}
           </Box>
@@ -229,7 +231,9 @@ export default function Navbar({
                 color="inherit"
               >
                 <AccountCircle />
-                <Typography variant="body1" component="span">{username}</Typography>
+                <Typography variant="body1" component="span">
+                  {username}
+                </Typography>
               </IconButton>
               <Menu
                 id="menu-appbar"
