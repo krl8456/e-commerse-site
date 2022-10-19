@@ -1,92 +1,72 @@
-import { useState, useRef } from "react";
+import { useState } from 'react'; 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { User } from "../interfaces";
+import Button from "@mui/material/Button";
+import Alert from '@mui/material/Alert';
+import { useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-interface SignInProps {
-  username: string;
-  password: string;
-  setUsername(u: string): void;
-  setPassword(p: string): void;
-  setAuth(b: boolean): void;
-}
-
-function SignIn({
-  username,
-  password,
-  setUsername,
-  setPassword,
-  setAuth,
-}: SignInProps) {
-  // const [username, setUsername] = useState("");
-  // const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [submitButtonClicked, setSubmitButtonClicked] = useState(false);
-  const [message, setMessage] = useState("");
-  const [users, setUsers] = useState<Array<User>>(
-    JSON.parse(localStorage.getItem("users") || "[]") || []
-  );
-  const userRef = useRef<HTMLInputElement>(null);
+function SignIn() {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
+  const emailRef = useRef<HTMLInputElement>();
+  const passwordRef = useRef<HTMLInputElement>();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  console.log(success);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setUsername("");
-    setPassword("");
-    setSubmitButtonClicked(true);
-    searchUser()
-    ? setMessage("")
-    : setMessage("You entered wrong password or username");
-    userRef?.current?.focus();
-    success ? setAuth(true) : setAuth(false);
-  };
-  const searchUser = () => {
-    for (let el of users) {
-      if (username === el.username && password === el.password) {
-        setSuccess(true);
-        return true;
-      }
-    }
-    return false;
-  };
 
+    try {
+      setError('');
+      setLoading(true);
+      await login(emailRef?.current?.value, passwordRef?.current?.value);
+      navigate("/");
+    } catch {
+      setError("Failed to sign in");
+    }
+    setLoading(false);
+    
+
+  }
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         paddingBottom: "4em",
         paddingTop: mediaBreakpoint ? "4em" : "8em",
+        px: "1em",
       }}
     >
       <Box
         component="form"
         sx={{
-          width: "250px",
+          maxWidth: "600px",
           p: "3em",
-          boxSizing: "border-box",
-          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px;",
+          boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px;",
+          mx: "auto",
         }}
         onSubmit={handleSubmit}
       >
+        <Typography variant="h4" component="h2" sx={{ mb: "1em", textAlign: "center" }}>
+          Log in
+        </Typography>
         <Typography variant="body1" component="p">
-          Username:
+          Email:
         </Typography>
         <TextField
           id="standard-basic"
+          type="email"
           variant="standard"
           color="secondary"
-          inputRef={userRef}
           autoComplete="off"
           autoFocus
-          onChange={(e) => setUsername(e.target.value)}
-          value={username}
+          inputRef={emailRef}
+          sx={{width: "85%"}}
         />
         <Typography variant="body1" component="p" sx={{ mt: "2.5em" }}>
           Password:
@@ -96,27 +76,22 @@ function SignIn({
           type="password"
           variant="standard"
           color="secondary"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
+          inputRef={passwordRef}
+          sx={{width: "85%"}}
         />
         <Button
           type="submit"
           variant="contained"
           color="secondary"
-          sx={{ mt: "3em", ml: "auto", px: "2em" }}
+          sx={{ mt: "3em", px: "4em", py: "1em", display: "block", mx: "auto" }}
+          disabled={loading}
         >
-          Login
+          Log In
         </Button>
-
-        {submitButtonClicked && (
-          <Typography
-            variant="body2"
-            component="p"
-            sx={{ color: "red", mt: "1em" }}
-          >
-            {message}
-          </Typography>
-        )}
+        {error && <Alert severity="error" sx={{mt: "1.5em"}}>{error}</Alert>}
+        <Typography variant="body1" component="p" sx={{ mt: "2em" }}>
+          Don't have an account? <Link to={"/signup"}>Sign up</Link>
+        </Typography>
       </Box>
     </Box>
   );

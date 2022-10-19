@@ -6,7 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Button from "@mui/material/Button";
 import Alert from '@mui/material/Alert';
 import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 function SignUp() {
@@ -16,8 +16,8 @@ function SignUp() {
   const passwordConfirmRef = useRef<HTMLInputElement>();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup, currentUser } = useAuth();
-
+  const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,6 +30,7 @@ function SignUp() {
       setError('');
       setLoading(true);
       await signup(emailRef?.current?.value, passwordRef?.current?.value);
+      navigate("/");
     } catch {
       setError("Failed to create an account");
     }
