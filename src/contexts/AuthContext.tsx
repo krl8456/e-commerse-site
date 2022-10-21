@@ -3,6 +3,8 @@ import { auth } from "../firebase";
 interface contextValue {
   currentUser?: string;
   signup(email: string, password: string): any;
+  login(email: string, password: string): any;
+  logout(): any;
 }
 
 const AuthContext = React.createContext<contextValue | any>(null);
@@ -26,6 +28,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return auth.signInWithEmailAndPassword(email, password);
   }
 
+  const logout = () => {
+    return auth.signOut();
+  }
+
 
 
   useEffect(() => {
@@ -40,7 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     currentUser,
     signup,
-    login
+    login,
+    logout
   };
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 }

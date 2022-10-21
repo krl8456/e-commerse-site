@@ -8,31 +8,25 @@ import ProductDetails from "./ProductDetails";
 import ProductsContainer from "./ProductsContainer";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Product, User } from "../interfaces";
+import { Product } from "../interfaces";
 import { useState, useEffect, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
-import { AuthProvider, useAuth } from "../contexts/AuthContext";
+import { AuthProvider } from "../contexts/AuthContext";
 
 function App() {
   const [products, setProducts] = useState<Array<Product>>([]);
-  // const [allProducts, setAllProducts] = useState<Array<Product>>([]);
   const [currentCategory, setCurrentCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [categoryTitle, setCategoryTitle] = useState("All products");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [auth, setAuth] = useState(false); //zapisz auth w lacal storage !
-  // const [users, setUsers] = useState<Array<User>>(JSON.parse(localStorage.getItem("users") || "[]") || []);
 
   useEffect(() => {
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((json) => {
         setProducts(json);
-        // setAllProducts(json);
         setLoadingProducts(false);
       });
   }, []);
@@ -41,12 +35,6 @@ function App() {
     fetch("https://fakestoreapi.com/products/categories")
       .then((res) => res.json())
       .then((json) => setCategories(json));
-  }, []);
-
-  useEffect(() => {
-    fetch("https://fakestoreapi.com/users")
-      .then((res) => res.json())
-      .then((json) => localStorage.setItem("users", JSON.stringify(json)));
   }, []);
 
   const searchByCategory = (category: string) => {
@@ -65,10 +53,6 @@ function App() {
       : products;
   }, [products, currentCategory]);
 
-  // const productComponents = products
-  //   .map((el) => <Products product={el} />)
-  //   .slice(0, 9);
-
   const productsRoutes = products.map((el) => (
     <Route
       path={`/products/${el.id}`}
@@ -83,8 +67,6 @@ function App() {
           categories={categories}
           products={products}
           searchByCategory={searchByCategory}
-          auth={auth}
-          username={username}
         />
         <Routes>
           <Route
