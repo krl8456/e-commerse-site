@@ -8,7 +8,7 @@ interface ProductsContainerProps {
   title: string;
 }
 
-function ProductsContainer({ children, title }: ProductsContainerProps) {
+const ProductsContainer = ({ children, title }: ProductsContainerProps) => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   return (
     <>

@@ -17,6 +17,7 @@ import { Product } from "../interfaces";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import Cart from "../Cart";
 
 interface NavbarProps {
   categories: Array<string>;
@@ -24,11 +25,11 @@ interface NavbarProps {
   searchByCategory(category: string): void;
 }
 
-export default function Navbar({
+const Navbar = ({
   categories,
   products,
   searchByCategory,
-}: NavbarProps) {
+}: NavbarProps) => {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
   const [textFieldData, setTextFieldData] = useState("");
@@ -174,7 +175,7 @@ export default function Navbar({
                 mr: 12,
                 position: mediaBreakpoint ? "relative" : "absolute",
                 top: mediaBreakpoint ? 0 : 90,
-                right: -20,
+                right: mediaBreakpoint ? -10 : 0,
                 width: "40%",
               }}
             >
@@ -205,6 +206,7 @@ export default function Navbar({
                     <Link
                       to={`/products/${el.id}`}
                       style={{ textDecoration: "none", color: "black" }}
+                      key={uuidv4()}
                     >
                       <Box
                         sx={{
@@ -231,7 +233,7 @@ export default function Navbar({
                 </Paper>
               )}
             </Box>
-
+            <Cart />
             {currentUser ? (
               <div>
                 <IconButton
@@ -264,7 +266,7 @@ export default function Navbar({
                   onClose={handleCloseProfile}
                   sx={{ mt: 6, ml: -3, w: "5em" }}
                 >
-                  <MenuItem onClick={handleCloseProfile}>Profile</MenuItem>
+                  <Link to="/dashboard" style={{textDecoration: "none", color: "black"}}><MenuItem onClick={handleCloseProfile}>Profile</MenuItem></Link>
                   <MenuItem onClick={handleCloseProfile}>My account</MenuItem>
                   <MenuItem
                     onClick={() => {handleCloseProfile(); handleLogout()}}
@@ -292,3 +294,5 @@ export default function Navbar({
     </>
   );
 }
+
+export default Navbar;

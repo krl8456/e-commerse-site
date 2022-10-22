@@ -6,7 +6,7 @@ interface relatedProductProps {
   product: Product;
 }
 
-export default function RelatedProduct({ product }: relatedProductProps) {
+const RelatedProduct = ({ product }: relatedProductProps) => {
   return (
     <Link
       to={`/products/${product.id}`}
@@ -30,3 +30,4 @@ export default function RelatedProduct({ product }: relatedProductProps) {
     </Link>
   );
 }
+export default RelatedProduct;

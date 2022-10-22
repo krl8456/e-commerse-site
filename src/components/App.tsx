@@ -14,8 +14,11 @@ import { Route, Routes } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import { AuthProvider } from "../contexts/AuthContext";
+import { v4 as uuidv4 } from "uuid";
+import Dashboard from "./Dashboard";
+import RequireAuth from "./RequireAuth";
 
-function App() {
+const App = () => {
   const [products, setProducts] = useState<Array<Product>>([]);
   const [currentCategory, setCurrentCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -56,7 +59,9 @@ function App() {
   const productsRoutes = products.map((el) => (
     <Route
       path={`/products/${el.id}`}
-      element={<ProductDetails product={el} products={products} />}
+      element={
+        <ProductDetails product={el} products={products} key={uuidv4()} />
+      }
     ></Route>
   ));
 
@@ -87,7 +92,7 @@ function App() {
                 <MainContent>
                   <ProductsContainer title={categoryTitle}>
                     {currentProducts
-                      .map((el) => <Products product={el} />)
+                      .map((el) => <Products product={el} key={uuidv4()} />)
                       .slice(0, 9)}
                   </ProductsContainer>
                   <Categories
@@ -99,17 +104,20 @@ function App() {
             }
           ></Route>
           {productsRoutes}
+          <Route path="/signin" element={<SignIn />}></Route>
+          <Route path="/signup" element={<SignUp />}></Route>
           <Route
-            path="/signin"
+            path="/dashboard"
             element={
-              <SignIn />
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
             }
           ></Route>
-          <Route path="/signup" element={<SignUp />}></Route>
         </Routes>
       </Site>
     </AuthProvider>
   );
-}
+};
 
 export default App;

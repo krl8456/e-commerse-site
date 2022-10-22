@@ -9,7 +9,7 @@ import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-function SignIn() {
+const SignIn = () => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();

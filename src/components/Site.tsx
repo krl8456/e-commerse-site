@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
 
-export default function Site({ children }: { children: React.ReactNode }) {
+const Site = ({ children }: { children: React.ReactNode }) => {
   return (
     <Container
       sx={{ bgcolor: "#fff", mt: "2em", borderRadius: 8, pb:4, overflowX: "hidden"}}
@@ -10,3 +10,5 @@ export default function Site({ children }: { children: React.ReactNode }) {
     </Container>
   );
 };
+
+export default Site;

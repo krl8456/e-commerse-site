@@ -3,6 +3,7 @@ import { Product } from "../interfaces";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import Rating from "@mui/material/Rating";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import RelatedProduct from "./RelatedProduct"
@@ -12,8 +13,7 @@ interface ProductDetailsProps {
   product: Product;
   products: Array<Product>
 }
-
-export default function ProductDetails({ product, products }: ProductDetailsProps) {
+const ProductDetails = ({ product, products }: ProductDetailsProps) => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
 
   const relatedProducts = products.filter(el => el.category === product.category && el.id !== product.id).map(el => <RelatedProduct product={el} />)
@@ -51,6 +51,7 @@ export default function ProductDetails({ product, products }: ProductDetailsProp
             <Typography variant="h6" component="div">({product.rating.count})</Typography>
           </Box>
         </Box>
+        <Button variant="contained" color="secondary">Add to cart</Button>
       </Stack>
     </Box>
     <Typography variant="h4" component="div" sx={{p: 6}}>Related products: </Typography>
@@ -60,3 +61,5 @@ export default function ProductDetails({ product, products }: ProductDetailsProp
     </>
   );
 }
+
+export default ProductDetails;

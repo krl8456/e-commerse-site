@@ -14,7 +14,7 @@ interface ProductCardProps {
   product: Product;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Grid key={product.id} item xs={12} md={4}>
       <Link
@@ -62,3 +62,5 @@ export default function ProductCard({ product }: ProductCardProps) {
     </Grid>
   );
 }
+
+export default ProductCard;

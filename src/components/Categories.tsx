@@ -12,10 +12,10 @@ interface CategoriesProps {
   searchByCategory(category: string): void;
 }
 
-export default function Categories({
+const Categories = ({
   categories,
   searchByCategory,
-}: CategoriesProps) {
+}: CategoriesProps) => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   if (!mediaBreakpoint) return null;
   return (
@@ -58,3 +58,5 @@ export default function Categories({
     </Box>
   );
 }
+
+export default Categories;
