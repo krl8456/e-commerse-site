@@ -1,39 +1,37 @@
-import { useState } from 'react'; 
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Button from "@mui/material/Button";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-const SignIn = () => {
+const ForgotPassword = () => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   const emailRef = useRef<HTMLInputElement>();
-  const passwordRef = useRef<HTMLInputElement>();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { resetPassword } = useAuth();
   const navigate = useNavigate();
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      setError('');
+      setMessage("");
+      setError("");
       setLoading(true);
-      await login(emailRef?.current?.value, passwordRef?.current?.value);
-      navigate("/");
+      await resetPassword(emailRef?.current?.value);
+      setMessage("Check your inbox for further instructions");
     } catch {
-      setError("Failed to sign in");
+      setError("Failed to reset password");
     }
     setLoading(false);
-    
-
-  }
+  };
   return (
     <Box
       sx={{
@@ -52,8 +50,12 @@ const SignIn = () => {
         }}
         onSubmit={handleSubmit}
       >
-        <Typography variant="h4" component="h2" sx={{ mb: "1em", textAlign: "center" }}>
-          Log in
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{ mb: "1em", textAlign: "center" }}
+        >
+          Password Reset
         </Typography>
         <Typography variant="body1" component="p">
           Email:
@@ -66,18 +68,7 @@ const SignIn = () => {
           autoComplete="off"
           autoFocus
           inputRef={emailRef}
-          sx={{width: "85%"}}
-        />
-        <Typography variant="body1" component="p" sx={{ mt: "2.5em" }}>
-          Password:
-        </Typography>
-        <TextField
-          id="standard-basic"
-          type="password"
-          variant="standard"
-          color="secondary"
-          inputRef={passwordRef}
-          sx={{width: "85%"}}
+          sx={{ width: "85%" }}
         />
         <Button
           type="submit"
@@ -86,18 +77,35 @@ const SignIn = () => {
           sx={{ mt: "3em", px: "4em", py: "1em", display: "block", mx: "auto" }}
           disabled={loading}
         >
-          Log In
+          Reset Password
         </Button>
-        {error && <Alert severity="error" sx={{mt: "1.5em"}}>{error}</Alert>}
-        <Typography variant="body1" component="p" sx={{ mt: "2em" }}>
-         <Link to={"/forgot-password"}>Forgot password?</Link>
+        {message && (
+          <Alert severity="success" sx={{ mt: "1.5em" }}>
+            {message}
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="error" sx={{ mt: "1.5em" }}>
+            {error}
+          </Alert>
+        )}
+        <Typography
+          variant="body1"
+          component="p"
+          sx={{ mt: "2em", textAlign: "center" }}
+        >
+          <Link to={"/signin"}>Login</Link>
         </Typography>
       </Box>
-        <Typography variant="body1" component="p" sx={{ mt: "2em", textAlign: "center" }}>
-          Don't have an account? <Link to={"/signup"}>Sign up</Link>
-        </Typography>
+      <Typography
+        variant="body1"
+        component="p"
+        sx={{ mt: "2em", textAlign: "center" }}
+      >
+        Don't have an account? <Link to={"/signup"}>Sign up</Link>
+      </Typography>
     </Box>
   );
-}
+};
 
-export default SignIn;
+export default ForgotPassword;

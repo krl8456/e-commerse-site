@@ -267,7 +267,7 @@ const Navbar = ({
                   sx={{ mt: 6, ml: -3, w: "5em" }}
                 >
                   <Link to="/dashboard" style={{textDecoration: "none", color: "black"}}><MenuItem onClick={handleCloseProfile}>Profile</MenuItem></Link>
-                  <MenuItem onClick={handleCloseProfile}>My account</MenuItem>
+                  <MenuItem onClick={handleCloseProfile}>My purchases</MenuItem>
                   <MenuItem
                     onClick={() => {handleCloseProfile(); handleLogout()}}
                     sx={{ color: "red", borderTop: 1, borderTopColor: "gray" }}

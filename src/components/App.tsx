@@ -17,6 +17,8 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 import Dashboard from "./Dashboard";
 import RequireAuth from "./RequireAuth";
+import ForgotPassword from "./ForgotPassword";
+import UpdateProfile from "./UpdateProfile";
 
 const App = () => {
   const [products, setProducts] = useState<Array<Product>>([]);
@@ -114,6 +116,15 @@ const App = () => {
               </RequireAuth>
             }
           ></Route>
+          <Route
+            path="/update-profile"
+            element={
+              <RequireAuth>
+                <UpdateProfile />
+              </RequireAuth>
+            }
+          ></Route>
+          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         </Routes>
       </Site>
     </AuthProvider>
