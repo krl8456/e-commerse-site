@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 interface CategoriesProps {
   categories: Array<string>;
@@ -44,7 +45,7 @@ const Categories = ({
           </ListItem>
         </Link>
         {categories.map((el) => (
-          <Link to="/" style={{textDecoration: "none", color: "black"}}>
+          <Link to="/" style={{textDecoration: "none", color: "black"}} key={uuidv4()}>
             <ListItem disablePadding onClick={() => searchByCategory(el)}>
               <ListItemButton>
                 <ListItemText

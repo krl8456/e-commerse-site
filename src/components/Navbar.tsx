@@ -23,12 +23,14 @@ interface NavbarProps {
   categories: Array<string>;
   products: Array<Product>;
   searchByCategory(category: string): void;
+  quantityOfProducts: number;
 }
 
 const Navbar = ({
   categories,
   products,
   searchByCategory,
+  quantityOfProducts
 }: NavbarProps) => {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
@@ -133,6 +135,7 @@ const Navbar = ({
                     <Link
                       to="/"
                       style={{ textDecoration: "none", color: "black" }}
+                      key={uuidv4()}
                     >
                       <Box onClick={() => searchByCategory(el)}>
                         <MenuItem key={uuidv4()} onClick={handleCloseMenu}>
@@ -233,7 +236,7 @@ const Navbar = ({
                 </Paper>
               )}
             </Box>
-            <Cart />
+            <Cart quantityOfProducts={quantityOfProducts}/>
             {currentUser ? (
               <div>
                 <IconButton

@@ -1,24 +1,25 @@
-import { useState } from 'react'; 
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Button from "@mui/material/Button";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+
 
 const SignUp = () => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const passwordConfirmRef = useRef<HTMLInputElement>();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
-
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -27,7 +28,7 @@ const SignUp = () => {
     }
 
     try {
-      setError('');
+      setError("");
       setLoading(true);
       await signup(emailRef?.current?.value, passwordRef?.current?.value);
       navigate("/");
@@ -35,8 +36,8 @@ const SignUp = () => {
       setError("Failed to create an account");
     }
     setLoading(false);
-
-  }
+    
+  };
   return (
     <Box
       sx={{
@@ -55,7 +56,11 @@ const SignUp = () => {
         }}
         onSubmit={handleSubmit}
       >
-        <Typography variant="h4" component="h2" sx={{ mb: "1em", textAlign: "center" }}>
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{ mb: "1em", textAlign: "center" }}
+        >
           Create an account
         </Typography>
         <Typography variant="body1" component="p">
@@ -69,7 +74,7 @@ const SignUp = () => {
           autoComplete="off"
           autoFocus
           inputRef={emailRef}
-          sx={{width: "85%"}}
+          sx={{ width: "85%" }}
         />
         <Typography variant="body1" component="p" sx={{ mt: "2.5em" }}>
           Password:
@@ -80,7 +85,7 @@ const SignUp = () => {
           variant="standard"
           color="secondary"
           inputRef={passwordRef}
-          sx={{width: "85%"}}
+          sx={{ width: "85%" }}
         />
         <Typography variant="body1" component="p" sx={{ mt: "2.5em" }}>
           Password confirmation:
@@ -91,7 +96,7 @@ const SignUp = () => {
           variant="standard"
           color="secondary"
           inputRef={passwordConfirmRef}
-          sx={{width: "85%"}}
+          sx={{ width: "85%" }}
         />
         <Button
           type="submit"
@@ -102,13 +107,17 @@ const SignUp = () => {
         >
           Sign up
         </Button>
-        {error && <Alert severity="error" sx={{mt: "1.5em"}}>{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mt: "1.5em" }}>
+            {error}
+          </Alert>
+        )}
         <Typography variant="body1" component="p" sx={{ mt: "2em" }}>
           Already have an account? <Link to={"/signin"}>Sign in</Link>
         </Typography>
       </Box>
     </Box>
   );
-}
+};
 
 export default SignUp;

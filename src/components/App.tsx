@@ -1,7 +1,7 @@
 import "../App.css";
 import Site from "./Site";
 import Navbar from "./Navbar";
-import Products from "./ProductCard";
+import ProductCard from "./ProductCard";
 import Categories from "./Categories";
 import MainContent from "./MainContent";
 import ProductDetails from "./ProductDetails";
@@ -13,12 +13,14 @@ import { useState, useEffect, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
-import { AuthProvider } from "../contexts/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 import Dashboard from "./Dashboard";
 import RequireAuth from "./RequireAuth";
 import ForgotPassword from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
+import { useAuth } from "../contexts/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const App = () => {
   const [products, setProducts] = useState<Array<Product>>([]);
@@ -26,6 +28,9 @@ const App = () => {
   const [categories, setCategories] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [categoryTitle, setCategoryTitle] = useState("All products");
+  const [usersProducts, setUsersProducts] = useState<any>([]);
+  const [productAdded, setProductAdded] = useState(true);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     fetch("https://fakestoreapi.com/products")
@@ -41,6 +46,21 @@ const App = () => {
       .then((res) => res.json())
       .then((json) => setCategories(json));
   }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setUsersProducts(userSnap.data());
+        }
+      } catch (e) {
+        console.log("No such document");
+      }
+    };
+    fetchProducts();
+  }, [currentUser, productAdded]);
 
   const searchByCategory = (category: string) => {
     if (category === "") {
@@ -62,72 +82,79 @@ const App = () => {
     <Route
       path={`/products/${el.id}`}
       element={
-        <ProductDetails product={el} products={products} key={uuidv4()} />
+        <ProductDetails
+          product={el}
+          products={products}
+          usersProducts={usersProducts}
+          setProductAdded={setProductAdded}
+          key={uuidv4()}
+        />
       }
     ></Route>
   ));
-
+    
   return (
-    <AuthProvider>
-      <Site>
-        <Navbar
-          categories={categories}
-          products={products}
-          searchByCategory={searchByCategory}
-        />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              loadingProducts ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "80vh",
-                  }}
-                >
-                  <CircularProgress sx={{ color: "#000" }} />
-                </Box>
-              ) : (
-                <MainContent>
-                  <ProductsContainer title={categoryTitle}>
-                    {currentProducts
-                      .map((el) => <Products product={el} key={uuidv4()} />)
-                      .slice(0, 9)}
-                  </ProductsContainer>
-                  <Categories
-                    categories={categories}
-                    searchByCategory={searchByCategory}
-                  />
-                </MainContent>
-              )
-            }
-          ></Route>
-          {productsRoutes}
-          <Route path="/signin" element={<SignIn />}></Route>
-          <Route path="/signup" element={<SignUp />}></Route>
-          <Route
-            path="/dashboard"
-            element={
-              <RequireAuth>
-                <Dashboard />
-              </RequireAuth>
-            }
-          ></Route>
-          <Route
-            path="/update-profile"
-            element={
-              <RequireAuth>
-                <UpdateProfile />
-              </RequireAuth>
-            }
-          ></Route>
-          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
-        </Routes>
-      </Site>
-    </AuthProvider>
+    //<AuthProvider>
+    <Site>
+      <Navbar
+        categories={categories}
+        products={products}
+        searchByCategory={searchByCategory}
+        quantityOfProducts={(JSON.stringify(usersProducts) === JSON.stringify([])) ?0 : usersProducts.products.length}
+      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            loadingProducts ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "80vh",
+                }}
+              >
+                <CircularProgress sx={{ color: "#000" }} />
+              </Box>
+            ) : (
+              <MainContent>
+                <ProductsContainer title={categoryTitle}>
+                  {currentProducts
+                    .map((el) => <ProductCard product={el} key={uuidv4()} />)
+                    .slice(0, 9)}
+                </ProductsContainer>
+                <Categories
+                  categories={categories}
+                  searchByCategory={searchByCategory}
+                />
+              </MainContent>
+            )
+          }
+        ></Route>
+        {productsRoutes}
+        <Route path="/signin" element={<SignIn />}></Route>
+        <Route path="/signup" element={<SignUp />}></Route>
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        ></Route>
+        <Route
+          path="/update-profile"
+          element={
+            <RequireAuth>
+              <UpdateProfile />
+            </RequireAuth>
+          }
+        ></Route>
+        <Route path="/forgot-password" element={<ForgotPassword />}></Route>
+      </Routes>
+    </Site>
+    //</AuthProvider>
   );
 };
 

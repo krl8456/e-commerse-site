@@ -12,7 +12,17 @@ const ProductsContainer = ({ children, title }: ProductsContainerProps) => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   return (
     <>
-      <Typography variant="h3" component="h3" sx={{ml: mediaBreakpoint ? "32%" : ".3em", mb: "2em", mt: mediaBreakpoint ? "0" : "2em"}}>{title}</Typography>
+      <Typography
+        variant="h3"
+        component="h3"
+        sx={{
+          ml: mediaBreakpoint ? "32%" : ".3em",
+          mb: "2em",
+          mt: mediaBreakpoint ? "0" : "2em",
+        }}
+      >
+        {title}
+      </Typography>
       <Grid
         container
         spacing={4}
@@ -27,6 +37,6 @@ const ProductsContainer = ({ children, title }: ProductsContainerProps) => {
       </Grid>
     </>
   );
-}
+};
 
 export default ProductsContainer;

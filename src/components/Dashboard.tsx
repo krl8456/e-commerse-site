@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -10,13 +10,17 @@ const Dashboard = () => {
   const { currentUser } = useAuth();
   return (
     <>
-      <Container
+      <Box
         sx={{
-          minHeight: "75vh",
           display: "flex",
           flexDirection: "column",
           gap: "1.5em",
           alignItems: "center",
+          boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px;",
+          width: "30%",
+          mx: "auto",
+          pb: "4em",
+          mt: "6em"
         }}
       >
         <Typography
@@ -39,7 +43,7 @@ const Dashboard = () => {
             Update your profile
           </Button>
         </Link>
-      </Container>
+      </Box>
     </>
   );
 };
