@@ -18,19 +18,22 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Cart from "../Cart";
+import { DocumentData } from "firebase/firestore";
 
 interface NavbarProps {
   categories: Array<string>;
   products: Array<Product>;
   searchByCategory(category: string): void;
   quantityOfProducts: number;
+  usersProducts: DocumentData;
 }
 
 const Navbar = ({
   categories,
   products,
   searchByCategory,
-  quantityOfProducts
+  quantityOfProducts,
+  usersProducts,
 }: NavbarProps) => {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
@@ -71,14 +74,14 @@ const Navbar = ({
   }, [products, textFieldData]);
 
   const handleLogout = async () => {
-    setError('');
+    setError("");
 
     try {
       await logout();
     } catch {
       setError("Failed to log in. Please try again");
     }
-  }
+  };
   return (
     <>
       <Box
@@ -236,7 +239,7 @@ const Navbar = ({
                 </Paper>
               )}
             </Box>
-            <Cart quantityOfProducts={quantityOfProducts}/>
+            <Cart quantityOfProducts={quantityOfProducts} usersProducts={usersProducts}/>
             {currentUser ? (
               <div>
                 <IconButton
@@ -252,7 +255,15 @@ const Navbar = ({
                     {currentUser.email}
                   </Typography>
                 </IconButton>
-                {error && <Typography variant="body2" component="span" sx={{color: "red"}}>{error}</Typography>} 
+                {error && (
+                  <Typography
+                    variant="body2"
+                    component="span"
+                    sx={{ color: "red" }}
+                  >
+                    {error}
+                  </Typography>
+                )}
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorProfile}
@@ -269,10 +280,18 @@ const Navbar = ({
                   onClose={handleCloseProfile}
                   sx={{ mt: 6, ml: -3, w: "5em" }}
                 >
-                  <Link to="/dashboard" style={{textDecoration: "none", color: "black"}}><MenuItem onClick={handleCloseProfile}>Profile</MenuItem></Link>
+                  <Link
+                    to="/dashboard"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem onClick={handleCloseProfile}>Profile</MenuItem>
+                  </Link>
                   <MenuItem onClick={handleCloseProfile}>My purchases</MenuItem>
                   <MenuItem
-                    onClick={() => {handleCloseProfile(); handleLogout()}}
+                    onClick={() => {
+                      handleCloseProfile();
+                      handleLogout();
+                    }}
                     sx={{ color: "red", borderTop: 1, borderTopColor: "gray" }}
                   >
                     Log out
@@ -296,6 +315,6 @@ const Navbar = ({
       </Box>
     </>
   );
-}
+};
 
 export default Navbar;

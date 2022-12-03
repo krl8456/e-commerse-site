@@ -19,7 +19,7 @@ import RequireAuth from "./RequireAuth";
 import ForgotPassword from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
 import { useAuth } from "../contexts/AuthContext";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 const App = () => {
@@ -28,7 +28,7 @@ const App = () => {
   const [categories, setCategories] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [categoryTitle, setCategoryTitle] = useState("All products");
-  const [usersProducts, setUsersProducts] = useState<any>([]);
+  const [usersProducts, setUsersProducts] = useState<DocumentData>({products: []});
   const [productAdded, setProductAdded] = useState(true);
   const { currentUser } = useAuth();
 
@@ -56,10 +56,12 @@ const App = () => {
           setUsersProducts(userSnap.data());
         }
       } catch (e) {
-        console.log("No such document");
+        setUsersProducts({products: []});
       }
     };
     fetchProducts();
+    console.log(usersProducts);
+    
   }, [currentUser, productAdded]);
 
   const searchByCategory = (category: string) => {
@@ -92,7 +94,7 @@ const App = () => {
       }
     ></Route>
   ));
-    
+
   return (
     //<AuthProvider>
     <Site>
@@ -100,7 +102,12 @@ const App = () => {
         categories={categories}
         products={products}
         searchByCategory={searchByCategory}
-        quantityOfProducts={(JSON.stringify(usersProducts) === JSON.stringify([])) ?0 : usersProducts.products.length}
+        quantityOfProducts={
+          JSON.stringify(usersProducts) === JSON.stringify({})
+            ? 0
+            : usersProducts.products.length
+        }
+        usersProducts={usersProducts}
       />
       <Routes>
         <Route

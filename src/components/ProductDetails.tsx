@@ -11,12 +11,7 @@ import {
   setDoc,
   arrayUnion,
   updateDoc,
-  arrayRemove,
-  increment,
-  collection,
-  query,
-  where,
-  getDocs,
+  arrayRemove
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
@@ -51,9 +46,9 @@ const ProductDetails = ({
       navigate("/signin");
       return;
     }
-    // console.log(await getDocs(query(collection(db, "users"), where("id", "==", product.id))));
-    const fieldToReplace = usersProducts.products.find((el: any) => el.id === product.id);
-    if (JSON.stringify(usersProducts) === JSON.stringify([])) {
+    
+    const fieldToReplace = usersProducts.products ? usersProducts.products.find((el: any) => el.id === product.id) : false;
+    if (JSON.stringify(usersProducts) === JSON.stringify({})) {
       try {
         const userRef = doc(db, "users", currentUser.uid);
         await setDoc(userRef, {
@@ -67,7 +62,6 @@ const ProductDetails = ({
             },
           ],
         });
-        setProductAdded((prev) => !prev);
         // console.log(usersProducts);
       } catch (e) {
         console.error("Error adding document: ", e);
@@ -85,7 +79,6 @@ const ProductDetails = ({
             quantity: quantityOfElement,
           }),
         });
-        // console.log(usersProducts);
       } catch (e) {
         console.error("Error updating document: ", e);
       }
@@ -102,11 +95,10 @@ const ProductDetails = ({
           }),
         });
         
-        // console.log(usersProducts);
       } catch (e) {
         console.error("Error updating document: ", e);
       }
-      setProductAdded((prev) => !prev);
+      // setProductAdded((prev) => !prev);
       
     } else {
       try {
@@ -120,24 +112,12 @@ const ProductDetails = ({
             quantity: 1,
           }),
         });
-        setProductAdded((prev) => !prev);
-        // console.log(usersProducts);
+        // setProductAdded((prev) => !prev);
       } catch (e) {
         console.error("Error updating document: ", e);
       }
     }
-    // if (usersProducts.products.find((el: any) => el.id === product.id)) {
-    //   try {
-    //     const userRef = doc(db, "users", currentUser.uid);
-    //     await updateDoc(userRef, {
-    //       products: products.map(el => el.id === product.id ? el.)
-    //     });
-    //     setProductAdded((prev) => !prev);
-    //     // console.log(usersProducts);
-    //   } catch (e) {
-    //     console.error("Error updating document: ", e);
-    //   }
-    // }
+    setProductAdded((prev) => !prev);
   };
 
   return (

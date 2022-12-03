@@ -34,4 +34,12 @@ interface Name {
   firstname: string;
   lastname: string;
 }
-
+// interface ProductShortDescription {
+//   id: number;
+//   img: string;
+//   name: string;
+//   quantity: number;
+// }
+// export interface UserProducts {
+//   products: Array<ProductShortDescription>;
+// }
