@@ -22,13 +22,13 @@ interface ProductDetailsProps {
   product: Product;
   products: Array<Product>;
   usersProducts: any;
-  setProductAdded: React.Dispatch<React.SetStateAction<boolean>>;
+  setProductAddedOrRemoved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const ProductDetails = ({
   product,
   products,
   usersProducts,
-  setProductAdded,
+  setProductAddedOrRemoved,
 }: ProductDetailsProps) => {
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   const { currentUser } = useAuth();
@@ -117,7 +117,7 @@ const ProductDetails = ({
         console.error("Error updating document: ", e);
       }
     }
-    setProductAdded((prev) => !prev);
+    setProductAddedOrRemoved((prev) => !prev);
   };
 
   return (

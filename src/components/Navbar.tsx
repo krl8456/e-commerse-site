@@ -17,7 +17,7 @@ import { Product } from "../interfaces";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import Cart from "../Cart";
+import Cart from "./Cart";
 import { DocumentData } from "firebase/firestore";
 
 interface NavbarProps {
@@ -26,6 +26,7 @@ interface NavbarProps {
   searchByCategory(category: string): void;
   quantityOfProducts: number;
   usersProducts: DocumentData;
+  setProductAddedOrRemoved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Navbar = ({
@@ -34,6 +35,7 @@ const Navbar = ({
   searchByCategory,
   quantityOfProducts,
   usersProducts,
+  setProductAddedOrRemoved,
 }: NavbarProps) => {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
@@ -239,7 +241,11 @@ const Navbar = ({
                 </Paper>
               )}
             </Box>
-            <Cart quantityOfProducts={quantityOfProducts} usersProducts={usersProducts}/>
+            <Cart
+              quantityOfProducts={quantityOfProducts}
+              usersProducts={usersProducts}
+              setProductAddedOrRemoved={setProductAddedOrRemoved}
+            />
             {currentUser ? (
               <div>
                 <IconButton

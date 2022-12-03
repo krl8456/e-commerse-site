@@ -29,7 +29,7 @@ const App = () => {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [categoryTitle, setCategoryTitle] = useState("All products");
   const [usersProducts, setUsersProducts] = useState<DocumentData>({products: []});
-  const [productAdded, setProductAdded] = useState(true);
+  const [productAddedOrRemoved, setProductAddedOrRemoved] = useState(true);
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const App = () => {
     fetchProducts();
     console.log(usersProducts);
     
-  }, [currentUser, productAdded]);
+  }, [currentUser, productAddedOrRemoved]);
 
   const searchByCategory = (category: string) => {
     if (category === "") {
@@ -88,7 +88,7 @@ const App = () => {
           product={el}
           products={products}
           usersProducts={usersProducts}
-          setProductAdded={setProductAdded}
+          setProductAddedOrRemoved={setProductAddedOrRemoved}
           key={uuidv4()}
         />
       }
@@ -108,6 +108,7 @@ const App = () => {
             : usersProducts.products.length
         }
         usersProducts={usersProducts}
+        setProductAddedOrRemoved={setProductAddedOrRemoved}
       />
       <Routes>
         <Route

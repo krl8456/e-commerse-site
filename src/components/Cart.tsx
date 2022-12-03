@@ -8,7 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { Typography } from "@mui/material";
 import { DocumentData } from "firebase/firestore";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteIcon from "./DeleteIcon";
+import { v4 as uuidv4 } from "uuid";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -22,9 +23,10 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 interface CartProps {
   quantityOfProducts: number;
   usersProducts: DocumentData;
+  setProductAddedOrRemoved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Cart = ({ quantityOfProducts, usersProducts }: CartProps) => {
+const Cart = ({ quantityOfProducts, usersProducts, setProductAddedOrRemoved }: CartProps) => {
   const [open, setOpen] = useState(false);
 
   const handleClickAway = () => {
@@ -66,20 +68,39 @@ const Cart = ({ quantityOfProducts, usersProducts }: CartProps) => {
                     overflowWrap: "break-word",
                     display: "flex",
                   }}
+                  key={uuidv4()}
                 >
                   <img
                     src={product.img}
                     alt="Product image"
                     style={{ width: "3em", height: "3em" }}
                   />
-                  <Box sx={{display: "flex", flexDirection: "column", ml: "auto"}}>
-                    <Typography variant="body1" component="p" sx={{ml: "auto"}}>
-                      {product.name.split(" ").splice(0,3).join(" ")}...
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      ml: "auto",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      component="p"
+                      sx={{ ml: "auto" }}
+                    >
+                      {product.name.split(" ").splice(0, 3).join(" ")}...
                     </Typography>
-                    <Typography variant="body2" component="p" sx={{ml: "auto"}}>
+                    <Typography
+                      variant="body2"
+                      component="p"
+                      sx={{ ml: "auto" }}
+                    >
                       x {product.quantity}
                     </Typography>
-                    <DeleteForeverIcon sx={{ml: "auto"}}></DeleteForeverIcon>
+                    <DeleteIcon
+                      usersProducts={usersProducts}
+                      id={product.id}
+                      setProductAddedOrRemoved={setProductAddedOrRemoved}
+                    />
                   </Box>
                 </Box>
               ))
