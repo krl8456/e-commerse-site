@@ -13,19 +13,21 @@ const ProductsContainer = ({ children, title }: ProductsContainerProps) => {
   return (
     <>
       <Typography
-        variant="h3"
+        variant="h1"
         component="h3"
         sx={{
-          ml: mediaBreakpoint ? "32%" : ".3em",
-          mb: "2em",
+          ml: mediaBreakpoint ? "32%" : 0,
+          mb: "0.4em",
           mt: mediaBreakpoint ? "0" : "2em",
+          fontFamily: "Qwitcher Grypen",
+          fontWeight: "600",
         }}
       >
         {title}
       </Typography>
       <Grid
         container
-        spacing={4}
+        spacing={mediaBreakpoint ? 4 : 0}
         my={4}
         sx={{
           width: mediaBreakpoint ? "70%" : "100%",

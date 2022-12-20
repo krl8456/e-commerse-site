@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Cart from "./Cart";
 import { DocumentData } from "firebase/firestore";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface NavbarProps {
   categories: Array<string>;
@@ -27,6 +28,7 @@ interface NavbarProps {
   quantityOfProducts: number;
   usersProducts: DocumentData;
   setProductAddedOrRemoved: React.Dispatch<React.SetStateAction<boolean>>;
+  loadingCart: boolean;
 }
 
 const Navbar = ({
@@ -36,6 +38,7 @@ const Navbar = ({
   quantityOfProducts,
   usersProducts,
   setProductAddedOrRemoved,
+  loadingCart,
 }: NavbarProps) => {
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
   const [anchorProfile, setAnchorProfile] = useState<null | HTMLElement>(null);
@@ -43,6 +46,7 @@ const Navbar = ({
   const [isProductListOpen, setIsProductListOpen] = useState(true);
   const [error, setError] = useState("");
   const openMenu = Boolean(anchorMenu);
+  const usernameBreakpoint = useMediaQuery("(min-width: 564px)"); 
   const titleMatches = useMediaQuery("(min-width:420px)");
   const mediaBreakpoint = useMediaQuery("(min-width:900px)");
   const { currentUser, logout } = useAuth();
@@ -241,11 +245,20 @@ const Navbar = ({
                 </Paper>
               )}
             </Box>
-            <Cart
-              quantityOfProducts={quantityOfProducts}
-              usersProducts={usersProducts}
-              setProductAddedOrRemoved={setProductAddedOrRemoved}
-            />
+            {loadingCart ? (
+              <CircularProgress
+                color="secondary"
+                size="1.7em"
+                sx={{ mr: 10 }}
+              />
+            ) : (
+              <Cart
+                quantityOfProducts={quantityOfProducts}
+                usersProducts={usersProducts}
+                setProductAddedOrRemoved={setProductAddedOrRemoved}
+              />
+            )}
+
             {currentUser ? (
               <div>
                 <IconButton
@@ -256,10 +269,10 @@ const Navbar = ({
                   onClick={handleProfile}
                   color="inherit"
                 >
-                  <AccountCircle />
-                  <Typography variant="body1" component="span">
+                  <AccountCircle sx={{ mr: ".5em" }} />
+                  {usernameBreakpoint && <Typography variant="body1" component="span">
                     {currentUser.email}
-                  </Typography>
+                  </Typography>}
                 </IconButton>
                 {error && (
                   <Typography
@@ -292,7 +305,14 @@ const Navbar = ({
                   >
                     <MenuItem onClick={handleCloseProfile}>Profile</MenuItem>
                   </Link>
-                  <MenuItem onClick={handleCloseProfile}>My purchases</MenuItem>
+                  <Link
+                    to="/purchases"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem onClick={handleCloseProfile}>
+                      My purchases
+                    </MenuItem>
+                  </Link>
                   <MenuItem
                     onClick={() => {
                       handleCloseProfile();

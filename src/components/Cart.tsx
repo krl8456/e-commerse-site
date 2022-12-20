@@ -6,10 +6,13 @@ import Badge, { BadgeProps } from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { Typography } from "@mui/material";
+import { ListItem, Typography } from "@mui/material";
 import { DocumentData } from "firebase/firestore";
 import DeleteIcon from "./DeleteIcon";
 import { v4 as uuidv4 } from "uuid";
+import { Link } from "react-router-dom";
+import List from "@mui/material/List";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -26,7 +29,11 @@ interface CartProps {
   setProductAddedOrRemoved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Cart = ({ quantityOfProducts, usersProducts, setProductAddedOrRemoved }: CartProps) => {
+const Cart = ({
+  quantityOfProducts,
+  usersProducts,
+  setProductAddedOrRemoved,
+}: CartProps) => {
   const [open, setOpen] = useState(false);
 
   const handleClickAway = () => {
@@ -53,56 +60,80 @@ const Cart = ({ quantityOfProducts, usersProducts, setProductAddedOrRemoved }: C
               position: "absolute",
               mt: "1em",
               overflowY: "scroll",
-              zIndex: "9999",
-              right: "4em",
+              zIndex: "3",
+              right: "8%",
             }}
           >
             {quantityOfProducts ? (
               usersProducts.products.map((product: DocumentData) => (
-                <Box
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "hsla(177, 5%, 82%, .4)",
-                    },
-                    p: "1em",
-                    overflowWrap: "break-word",
-                    display: "flex",
-                  }}
-                  key={uuidv4()}
-                >
-                  <img
-                    src={product.img}
-                    alt="Product image"
-                    style={{ width: "3em", height: "3em" }}
-                  />
-                  <Box
+                <List>
+                  <ListItem
                     sx={{
+                      "&:hover": {
+                        backgroundColor: "hsla(177, 5%, 82%, .4)",
+                      },
+                      p: "1em",
+                      overflowWrap: "break-word",
                       display: "flex",
-                      flexDirection: "column",
-                      ml: "auto",
+                      
                     }}
+                    key={uuidv4()}
                   >
-                    <Typography
-                      variant="body1"
-                      component="p"
-                      sx={{ ml: "auto" }}
+                    <Link
+                      to={`/products/${product.id}`}
+                      style={{
+                        color: "black",
+                      }}
                     >
-                      {product.name.split(" ").splice(0, 3).join(" ")}...
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      component="p"
-                      sx={{ ml: "auto" }}
+                      <img
+                        src={product.img}
+                        alt="Product image"
+                        style={{ width: "3em", height: "3em" }}
+                      />
+                    </Link>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        ml: "auto",
+                        alignItems: "flex-end",
+                      }}
                     >
-                      x {product.quantity}
-                    </Typography>
-                    <DeleteIcon
-                      usersProducts={usersProducts}
-                      id={product.id}
-                      setProductAddedOrRemoved={setProductAddedOrRemoved}
-                    />
-                  </Box>
-                </Box>
+                      <Link
+                        to={`/products/${product.id}`}
+                        style={{
+                          textDecoration: "none",
+                          color: "black",
+                          width: "100%",
+                        }}
+                      >
+                        <Typography
+                          variant="body1"
+                          component="p"
+                          sx={{ ml: "auto" }}
+                        >
+                          {product.name.split(" ").splice(0, 3).join(" ")}...
+                        </Typography>
+                      </Link>
+
+                      <Box sx={{ display: "flex", gap: "1em" }}>
+                        <Typography
+                          variant="body2"
+                          component="p"
+                          sx={{ ml: "auto" }}
+                        >
+                          x {product.quantity}
+                        </Typography>
+                        <DeleteIcon
+                          usersProducts={usersProducts}
+                          id={product.id}
+                          setProductAddedOrRemoved={setProductAddedOrRemoved}
+                        />
+                      </Box>
+                    </Box>
+                  </ListItem>
+                </List>
               ))
             ) : (
               <Typography
@@ -120,6 +151,24 @@ const Cart = ({ quantityOfProducts, usersProducts, setProductAddedOrRemoved }: C
                 No items added to basket
               </Typography>
             )}
+
+            {quantityOfProducts !== 0 && <Link
+              to="/purchases"
+              style={{
+                color: "black",
+                textDecoration: "none",
+                fontSize: "1.2em",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "pink",
+                height: "2em",
+                position: "sticky",
+                bottom: 0
+              }}
+            >
+              Go to summary <ArrowForwardIcon />
+            </Link>}
           </Paper>
         )}
       </Box>

@@ -11,7 +11,7 @@ import {
   setDoc,
   arrayUnion,
   updateDoc,
-  arrayRemove
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
@@ -46,23 +46,31 @@ const ProductDetails = ({
       navigate("/signin");
       return;
     }
-    
-    const fieldToReplace = usersProducts.products ? usersProducts.products.find((el: any) => el.id === product.id) : false;
-    if (JSON.stringify(usersProducts) === JSON.stringify({})) {
+
+    const fieldToReplace = usersProducts.products
+      ? usersProducts.products.find((el: any) => el.id === product.id)
+      : false;
+    if (JSON.stringify(usersProducts.products) === JSON.stringify([])) {
       try {
         const userRef = doc(db, "users", currentUser.uid);
+        console.log(userRef);
+        
+        
         await setDoc(userRef, {
           products: [
             {
               id: product.id,
               name: product.title,
               img: product.image,
+              price: product.price,
+              description: product.description,
+              category: product.category,
+              rating: product.rating,
               // timestamp: serverTimestamp(),
               quantity: 1,
             },
           ],
         });
-        // console.log(usersProducts);
       } catch (e) {
         console.error("Error adding document: ", e);
       }
@@ -75,6 +83,10 @@ const ProductDetails = ({
             id: product.id,
             name: product.title,
             img: product.image,
+            price: product.price,
+            description: product.description,
+            category: product.category,
+            rating: product.rating,
             // timestamp: serverTimestamp(),
             quantity: quantityOfElement,
           }),
@@ -90,16 +102,18 @@ const ProductDetails = ({
             id: product.id,
             name: product.title,
             img: product.image,
+            price: product.price,
+            description: product.description,
+            category: product.category,
+            rating: product.rating,
             // timestamp: serverTimestamp(),
             quantity: quantityOfElement + 1,
           }),
         });
-        
       } catch (e) {
         console.error("Error updating document: ", e);
       }
       // setProductAdded((prev) => !prev);
-      
     } else {
       try {
         const userRef = doc(db, "users", currentUser.uid);
@@ -108,6 +122,10 @@ const ProductDetails = ({
             id: product.id,
             name: product.title,
             img: product.image,
+            price: product.price,
+            description: product.description,
+            category: product.category,
+            rating: product.rating,
             // timestamp: serverTimestamp(),
             quantity: 1,
           }),
@@ -118,6 +136,7 @@ const ProductDetails = ({
       }
     }
     setProductAddedOrRemoved((prev) => !prev);
+  
   };
 
   return (
@@ -162,7 +181,7 @@ const ProductDetails = ({
             variant="contained"
             color="secondary"
             onClick={handleAdd}
-            sx={{ width: "30%" }}
+            sx={{ width: "12em" }}
             type="submit"
           >
             Add to cart

@@ -21,6 +21,7 @@ import UpdateProfile from "./UpdateProfile";
 import { useAuth } from "../contexts/AuthContext";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import Purchases from "./Purchases";
 
 const App = () => {
   const [products, setProducts] = useState<Array<Product>>([]);
@@ -28,8 +29,11 @@ const App = () => {
   const [categories, setCategories] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [categoryTitle, setCategoryTitle] = useState("All products");
-  const [usersProducts, setUsersProducts] = useState<DocumentData>({products: []});
+  const [usersProducts, setUsersProducts] = useState<DocumentData>({
+    products: [],
+  });
   const [productAddedOrRemoved, setProductAddedOrRemoved] = useState(true);
+  const [loadingCart, setLoadingCart] = useState(false);
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -50,18 +54,18 @@ const App = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoadingCart(true);
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUsersProducts(userSnap.data());
         }
       } catch (e) {
-        setUsersProducts({products: []});
+        setUsersProducts({ products: [] });
       }
+      setLoadingCart(false);
     };
     fetchProducts();
-    console.log(usersProducts);
-    
   }, [currentUser, productAddedOrRemoved]);
 
   const searchByCategory = (category: string) => {
@@ -109,6 +113,7 @@ const App = () => {
         }
         usersProducts={usersProducts}
         setProductAddedOrRemoved={setProductAddedOrRemoved}
+        loadingCart={loadingCart}
       />
       <Routes>
         <Route
@@ -148,6 +153,14 @@ const App = () => {
           element={
             <RequireAuth>
               <Dashboard />
+            </RequireAuth>
+          }
+        ></Route>
+        <Route
+          path="/purchases"
+          element={
+            <RequireAuth>
+              <Purchases usersProducts={usersProducts} setProductAddedOrRemoved={setProductAddedOrRemoved}/>
             </RequireAuth>
           }
         ></Route>

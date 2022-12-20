@@ -22,7 +22,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
         style={{ textDecoration: "none", marginLeft: "auto" }}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
-        <Card>
+        <Card
+          sx={{
+            boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
+          }}
+        >
           <CardActionArea disableTouchRipple>
             <CardMedia
               component="img"
@@ -61,6 +65,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
     </Grid>
   );
-}
+};
 
 export default ProductCard;

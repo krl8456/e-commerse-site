@@ -17,10 +17,10 @@ const Dashboard = () => {
           gap: "1.5em",
           alignItems: "center",
           boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px;",
-          width: "30%",
+          maxWidth: "400px",
           mx: "auto",
           pb: "4em",
-          mt: "6em"
+          mt: "6em",
         }}
       >
         <Typography
