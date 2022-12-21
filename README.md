@@ -1,6 +1,6 @@
 # Fake e-commerse site
 
-![Design preview](.src/preview.png)
+![Design preview](./src/preview.png)
 
 ## About the project
 
@@ -26,9 +26,9 @@ Users in this application are able to:
 ## Sample accounts to log in:
 
 1:
--login: example@gmail.com
--password: 123456
+- login: example@gmail.com
+- password: 123456
 
 2:
--login: hitatilut@gotgel.org
--password: 123456
+- login: hitatilut@gotgel.org
+- password: 123456
